@@ -41,6 +41,7 @@ extern "C" volatile uint32_t _millis;
 #include "../shared/HAL_SPI.h"
 #include "fastio.h"
 #include "watchdog.h"
+#include "timers.h"
 #include "MarlinSerial.h"
 
 #include <adc.h>

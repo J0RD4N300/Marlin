@@ -47,7 +47,7 @@ extern uint8_t marlin_debug_flags;
 #define DEBUGGING(F) (marlin_debug_flags & (MARLIN_DEBUG_## F))
 
 #define SERIAL_BOTH 0x7F
-#if HAS_MULTI_SERIAL
+#if NUM_SERIAL > 1
   extern int8_t serial_port_index;
   #define _PORT_REDIRECT(n,p)   REMEMBER(n,serial_port_index,p)
   #define _PORT_RESTORE(n)      RESTORE(n)

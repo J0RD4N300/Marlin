@@ -28,7 +28,7 @@ uint8_t marlin_debug_flags = MARLIN_DEBUG_NONE;
 static PGMSTR(errormagic, "Error:");
 static PGMSTR(echomagic, "echo:");
 
-#if HAS_MULTI_SERIAL
+#if NUM_SERIAL > 1
   int8_t serial_port_index = 0;
 #endif
 

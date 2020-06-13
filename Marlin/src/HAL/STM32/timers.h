@@ -33,15 +33,9 @@
 #define hal_timer_t uint32_t
 #define HAL_TIMER_TYPE_MAX 0xFFFFFFFF // Timers can be 16 or 32 bit
 
-#ifndef STEP_TIMER_NUM
-  #define STEP_TIMER_NUM        0  // Timer Index for Stepper
-#endif
-#ifndef PULSE_TIMER_NUM
-  #define PULSE_TIMER_NUM       STEP_TIMER_NUM
-#endif
-#ifndef TEMP_TIMER_NUM
-  #define TEMP_TIMER_NUM        1  // Timer Index for Temperature
-#endif
+#define STEP_TIMER_NUM 0  // index of timer to use for stepper
+#define TEMP_TIMER_NUM 1  // index of timer to use for temperature
+#define PULSE_TIMER_NUM STEP_TIMER_NUM
 
 #define TEMP_TIMER_FREQUENCY 1000   // Temperature::isr() is expected to be called at around 1kHz
 
@@ -63,13 +57,8 @@
 
 extern void Step_Handler(HardwareTimer *htim);
 extern void Temp_Handler(HardwareTimer *htim);
-
-#ifndef HAL_STEP_TIMER_ISR
-  #define HAL_STEP_TIMER_ISR() void Step_Handler(HardwareTimer *htim)
-#endif
-#ifndef HAL_TEMP_TIMER_ISR
-  #define HAL_TEMP_TIMER_ISR() void Temp_Handler(HardwareTimer *htim)
-#endif
+#define HAL_STEP_TIMER_ISR() void Step_Handler(HardwareTimer *htim)
+#define HAL_TEMP_TIMER_ISR() void Temp_Handler(HardwareTimer *htim)
 
 // ------------------------
 // Public Variables

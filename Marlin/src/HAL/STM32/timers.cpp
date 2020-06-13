@@ -21,6 +21,8 @@
  */
 #if defined(ARDUINO_ARCH_STM32) && !defined(STM32GENERIC)
 
+#include "timers.h"
+
 #include "../../inc/MarlinConfig.h"
 
 // ------------------------

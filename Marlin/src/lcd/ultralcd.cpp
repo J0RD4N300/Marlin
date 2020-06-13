@@ -119,7 +119,6 @@ MarlinUI ui;
   #endif
   #if ENABLED(TOUCH_BUTTONS)
     #include "../feature/touch/xpt2046.h"
-    bool MarlinUI::on_edit_screen = false;
   #endif
 #endif
 
@@ -613,12 +612,15 @@ void MarlinUI::quick_feedback(const bool clear_buttons/*=true*/) {
     UNUSED(clear_buttons);
   #endif
 
-  #if HAS_CHIRP
-    chirp(); // Buzz and wait. Is the delay needed for buttons to settle?
-    #if BOTH(HAS_LCD_MENU, USE_BEEPER)
-      for (int8_t i = 5; i--;) { buzzer.tick(); delay(2); }
-    #elif HAS_LCD_MENU
-      delay(10);
+  #if HAS_BUZZER
+    // Buzz and wait. Is the delay needed for buttons to settle?
+    buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+    #if HAS_LCD_MENU
+      #if USE_BEEPER
+        for (int8_t i = 5; i--;) { buzzer.tick(); delay(2); }
+      #else
+        delay(10);
+      #endif
     #endif
   #endif
 }
@@ -773,7 +775,7 @@ void MarlinUI::update() {
             if (!wait_for_unclick) {
               next_button_update_ms += 250;               // Longer delay on first press
               wait_for_unclick = true;                    // Avoid Back/Select click while repeating
-              chirp();
+              TERN_(HAS_BUZZER, buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ));
             }
           }
         }
@@ -1435,34 +1437,6 @@ void MarlinUI::update() {
           ?: TERN(HAS_PRINT_PROGRESS_PERMYRIAD, card.permyriadDone(), card.percentDone())
         #endif
       );
-    }
-
-  #endif
-
-  #if ENABLED(TOUCH_BUTTONS)
-
-    //
-    // Screen Click
-    //  - On menu screens move directly to the touched item
-    //  - On menu screens, right side (last 3 cols) acts like a scroll - half up => prev page, half down = next page
-    //  - On select screens (and others) touch the Right Half for +, Left Half for -
-    //  - On edit screens, touch Up Half for -,  Bottom Half to +
-    //
-    void MarlinUI::screen_click(const uint8_t row, const uint8_t col, const uint8_t, const uint8_t) {
-      const int8_t xdir = col < (LCD_WIDTH ) / 2 ? -1 : 1,
-                   ydir = row < (LCD_HEIGHT) / 2 ? -1 : 1;
-      if (on_edit_screen)
-        encoderDiff = ENCODER_PULSES_PER_STEP * ydir;
-      else if (screen_items > 0) {
-        // Last 3 cols act as a scroll :-)
-        if (col > (LCD_WIDTH) - 3)
-          // 2 * LCD_HEIGHT to scroll to bottom of next page. (LCD_HEIGHT would only go 1 item down.)
-          encoderDiff = ENCODER_PULSES_PER_STEP * (encoderLine - encoderTopLine + 2 * (LCD_HEIGHT)) * ydir;
-        else
-          encoderDiff = ENCODER_PULSES_PER_STEP * (row - encoderPosition + encoderTopLine);
-      }
-      else if (!on_status_screen())
-        encoderDiff = ENCODER_PULSES_PER_STEP * xdir;
     }
 
   #endif

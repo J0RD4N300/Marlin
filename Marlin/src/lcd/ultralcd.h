@@ -267,10 +267,6 @@ public:
     static void buzz(const long duration, const uint16_t freq);
   #endif
 
-  FORCE_INLINE static void chirp() {
-    TERN_(HAS_CHIRP, buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ));
-  }
-
   #if ENABLED(LCD_HAS_STATUS_INDICATORS)
     static void update_indicators();
   #endif
@@ -417,11 +413,6 @@ public:
         static void draw_hotend_status(const uint8_t row, const uint8_t extruder);
       #endif
 
-      #if ENABLED(TOUCH_BUTTONS)
-        static bool on_edit_screen;
-        static void screen_click(const uint8_t row, const uint8_t col, const uint8_t x, const uint8_t y);
-      #endif
-
       static void status_screen();
 
     #endif
@@ -531,6 +522,12 @@ public:
 
     #if ENABLED(SD_REPRINT_LAST_SELECTED_FILE)
       static void reselect_last_file();
+    #endif
+
+    #if ENABLED(G26_MESH_VALIDATION)
+      FORCE_INLINE static void chirp() {
+        TERN_(HAS_BUZZER, buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ));
+      }
     #endif
 
     #if ENABLED(AUTO_BED_LEVELING_UBL)
